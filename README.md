@@ -26,8 +26,8 @@ GET /keys/${key}
 |   ├── JsonSupport.scala           # 
 |   └── OKTable.scala               # init KStream and KTable
 |   └── QuickstartServer.scala      # main()
-|   └── UserRegistryActor.scala     # 
-|   └── UserRoutes.scala            # API routes
+|   └── MyRegistryActor.scala     # 
+|   └── MyRoutes.scala            # API routes
 ```
 
 # Requirements
@@ -52,3 +52,11 @@ kafka-console-consumer \
     --from-beginning
 ```
 
+# Building and Running
+
+```
+$ sbt
+...
+> run
+...
+```
