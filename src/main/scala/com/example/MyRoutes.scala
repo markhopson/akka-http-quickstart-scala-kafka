@@ -15,19 +15,19 @@ import akka.http.scaladsl.server.directives.RouteDirectives.complete
 import akka.http.scaladsl.server.directives.PathDirectives.path
 
 import scala.concurrent.Future
-import com.example.MyRegistryActor._
-import akka.pattern.ask
 import akka.util.Timeout
+
+import StatusCodes.InternalServerError
+
+import scala.util.{Failure, Success}
 
 trait MyRoutes extends JsonSupport {
 
   // we leave these abstract, since they will be provided by the App
   implicit def system: ActorSystem
 
-  lazy val log = Logging(system, classOf[MyRoutes])
-
   // other dependencies that MyRoutes use
-  def myRegistryActor: ActorRef
+  def lookup: String => Future[String]
 
   // Required by the `ask` (?) method below
   implicit lazy val timeout = Timeout(5.seconds) // usually we'd obtain the timeout from the system's configuration
@@ -38,10 +38,10 @@ trait MyRoutes extends JsonSupport {
         path(Segment) { name =>
           concat(
             get {
-              val valueForKey: Future[ActionPerformed] =
-                (myRegistryActor ? GetKey(name)).mapTo[ActionPerformed]
-              onSuccess(valueForKey) { body =>
-                complete((StatusCodes.OK, body))
+              val eventualValue = lookup(name)
+              onComplete(eventualValue) {
+                case Success(value) => complete(KeyValue(name, value))
+                case Failure(ex) => complete((InternalServerError, s"An error occurred: ${ex.getMessage}. Ex = $ex"))
               }
             })
         })

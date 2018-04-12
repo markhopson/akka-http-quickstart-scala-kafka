@@ -24,4 +24,6 @@ libraryDependencies += "org.apache.kafka"  %% "kafka" % "1.0.0"
 libraryDependencies += "com.lightbend"     %% "kafka-streams-scala"  % "0.2.0"
 libraryDependencies += "com.lightbend"     %% "kafka-streams-query"  % "0.1.1"
 
+libraryDependencies += "com.typesafe.akka" %% "akka-actor"           % akkaVersion
+
 //"org.slf4j" %% "slf4j-simple" % "1.6.4",

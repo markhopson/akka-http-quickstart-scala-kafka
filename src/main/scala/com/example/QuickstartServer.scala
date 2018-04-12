@@ -1,9 +1,10 @@
 package com.example
 
 //#quick-start-server
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
+import java.util.concurrent.Executors
 
+import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.duration.Duration
 import akka.actor.ActorRef
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
@@ -16,7 +17,9 @@ object QuickstartServer extends App with MyRoutes {
   implicit val system: ActorSystem = ActorSystem("helloAkkaHttpServer")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 
-  val myRegistryActor: ActorRef = system.actorOf(MyRegistryActor.props, "myRegistryActor")
+  val lookup = new LookupFromKTable {
+    val ex = ExecutionContext.fromExecutor(Executors.newFixedThreadPool(32))
+  }
 
   // from the MyRoutes trait
   lazy val routes: Route = MyRoutes
